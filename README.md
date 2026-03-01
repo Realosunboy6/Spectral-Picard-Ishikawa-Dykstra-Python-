@@ -1,9 +1,13 @@
+
+---
+
+```markdown
 # SPID: Spectral Picard-Ishikawa-Dykstra Iterations
 
-[![Language](https://img.shields.io/badge/Language-Julia_1.11-blue.svg)](https://julialang.org/)
+[![Language](https://img.shields.io/badge/Language-Python_3.9+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository contains the official Julia implementation of the **SPID v4** algorithm, as presented in the paper:
+This repository contains the official Python implementation of the **SPID v4** algorithm, as presented in the paper:
 > **Accelerated Computation of the Nearest Correlation Matrix via Spectral Picard-Ishikawa-Dykstra (SPID) Iterations** > *Oyeyinka E. Ibrahim (2026)*
 
 ## Overview
@@ -16,28 +20,81 @@ The Nearest Correlation Matrix (NCM) problem involves projecting a symmetric mat
 4. Strictly preserves exact unit-diagonal feasibility ($\text{diag}(X) = 1$).
 
 ## Repository Structure
-* `src/spid.jl`: Contains the core implementation of the `spid_v4` algorithm, alongside the baseline Modified Alternating Projections (MAP) and Anderson Acceleration (AA) methods.
-* `benchmarks/run_benchmarks.jl`: The reproduction script that generates the exact performance tables presented in the manuscript (including the Higham $4 \times 4$, Toeplitz $6 \times 6$, and simulated financial missing-data matrices).
+* `src/spid.py`: Contains the core Python implementation of the `spid_v4` algorithm, alongside the baseline Higham Modified Alternating Projections (MAP) and Anderson Acceleration (AA) methods.
+* `benchmarks/run_benchmarks.py`: The reproduction script that generates the exact performance tables presented in the manuscript (including the Higham $4 \times 4$, Toeplitz $6 \times 6$, and simulated financial missing-data matrices).
 * `README.md`: Project documentation.
 
 ## Requirements
-* **Julia** 1.11 or higher
-* Standard Library Modules: `LinearAlgebra`, `Random`, `Printf`
+* **Python** 3.9 or higher
+* Core Packages: `numpy`, `scipy`
+
+You can install the required dependencies using pip:
+```bash
+pip install numpy scipy
+
+```
 
 ## Quick Start
-You can easily use SPID v4 in your own Julia projects to repair invalid correlation matrices.
 
-```julia
-include("src/spid.jl")
+You can easily use SPID v4 in your own Python projects to repair invalid correlation matrices.
+
+```python
+import numpy as np
+from src.spid import spid_v4
 
 # 1. Define an invalid empirical correlation matrix (e.g., Higham 4x4)
-G = [ 2.0 -1.0  0.0  0.0;
-     -1.0  2.0 -1.0  0.0;
-      0.0 -1.0  2.0 -1.0;
-      0.0  0.0 -1.0  2.0]
+G = np.array([
+    [ 2.0, -1.0,  0.0,  0.0],
+    [-1.0,  2.0, -1.0,  0.0],
+    [ 0.0, -1.0,  2.0, -1.0],
+    [ 0.0,  0.0, -1.0,  2.0]
+])
 
 # 2. Compute the Nearest Correlation Matrix using SPID v4
-X_opt, iterations, runtime = spid_v4(G, tol=1e-5)
+X_opt, iterations = spid_v4(G, tol=1e-5)
 
-println("Converged in $iterations iterations.")
-display(X_opt)
+print(f"Converged in {iterations} iterations.")
+print("Repaired Matrix:")
+print(np.round(X_opt, 4))
+
+```
+
+## Reproducing the Paper Results
+
+To reproduce the numerical experiments and ablation studies from the manuscript, run the benchmark script from your terminal:
+
+```bash
+python benchmarks/run_benchmarks.py
+
+```
+
+This script will run SPID v4 head-to-head against Higham's Baseline (MAP) and Anderson Acceleration ($m=4$). It evaluates:
+
+1. **Classical Test Matrices** (e.g., Higham Ex 3.1)
+2. **Missing Data Topologies** (e.g., 25% MCAR / NMAR missingness applied to financial return datasets)
+
+**Expected Output:**
+You will see SPID v4 consistently matching the optimal Frobenius distance of the MAP baseline while requiring ~52-64% fewer iterations, entirely avoiding the collinearity instability that occasionally plagues Anderson Acceleration on dense matrices.
+
+## Citation
+
+If you use SPID v4 or this codebase in your research, please cite the accompanying manuscript:
+
+```bibtex
+@article{ibrahim2026spid,
+  title={Accelerated Computation of the Nearest Correlation Matrix via Spectral Picard-Ishikawa-Dykstra (SPID) Iterations},
+  author={Ibrahim, Oyeyinka E.},
+  journal={Submitted for Publication},
+  year={2026},
+  institution={Northern Illinois University}
+}
+
+```
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+```
+
+```
