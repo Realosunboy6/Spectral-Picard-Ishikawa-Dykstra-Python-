@@ -3,7 +3,7 @@
 [![Language](https://img.shields.io/badge/Language-Julia_1.11-blue.svg)](https://julialang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository contains the official Python implementation of the **SPID v4** algorithm, as presented in the paper:
+This repository contains the official Julia implementation of the **SPID v4** algorithm, as presented in the paper:
 > **Accelerated Computation of the Nearest Correlation Matrix via Spectral Picard-Ishikawa-Dykstra (SPID) Iterations** > *Oyeyinka E. Ibrahim (2026)*
 
 ## Overview
